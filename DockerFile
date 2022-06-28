@@ -1,0 +1,10 @@
+FROM maven:3.6.3-jdk-11-slim AS builder
+ARG APP_VERSION="0.0.1-beta"
+WORKDIR /build
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src/ src/
+RUN mvn versions:set -DnewVersion=${APP_VERSION}
+RUN mvn package -DskipTests -DfinalName="app"
+
+ENTRYPOINT ["java","-jar","/app.jar"]
